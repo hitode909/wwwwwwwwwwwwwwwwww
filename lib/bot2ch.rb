@@ -112,7 +112,8 @@ module Bot2ch
     end
 
     def set_family(parent,child)
-      parent.set_child(child)
+      return unless child.index > parent.index
+      parent.set_child(child) 
       child.set_parent(parent)
     end
 
@@ -130,17 +131,18 @@ module Bot2ch
 
     def to_html
       color = self.score > 3 ? 'red' : self.score > 1 ? 'blue' : 'black'
-      puts '<dl class="thread" style="font-size: ' + (Math.log(self.score) + 1).to_s + 'em; color: ' + color + '" >'
+      puts '<dl class="thread" style="font-size: ' + (Math.log(self.score + 10) - 1.5).to_s + 'em; color: ' + color + '" >'
       puts '<dt hb:annotation="true">'
       puts self.index
       puts '：<font color="green"><b>'
+      puts self.is_owner ? '<span class="owner">' : '<span>'
       puts self.name
+      puts '</span>'
       puts '</b></font>：'
       puts self.date
-      puts self.is_owner ? '<span class="owner">' : '<span>'
       puts 'ID:'
       puts self.user_id
-      puts '</span>'
+
       puts '</dt><dd>'
       puts self.body
       puts '</dd></dl>'
@@ -163,16 +165,29 @@ module Bot2ch
 
 
     def set_child(post)
-      return if @children.include?(post)
+      return if @children.include?(post) or post.index < self.index
       @children << post
       @score +=1
     end
 
     def set_parent(post)
-      return if @parents.include?(post)
+      return if @parents.include?(post) or post.index > self.index
       @parents << post
       @score +=1
     end
+
+    def scored?
+      self.score > 0
+    end
+
+    def primary?
+      self.parents.empty? && scored?
+    end
+    
+    def descendant
+      @children.concat(@children.map(&:descendant).flatten).uniq.sort_by{|post| post.index}
+    end
+
   end
 
   class Downloader

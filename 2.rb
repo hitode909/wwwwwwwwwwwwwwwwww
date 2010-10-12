@@ -43,19 +43,25 @@ thread.posts.each{ |post|
   }
 }
 
-thread.posts.select{|post| post.children.length > 0 }.each{|post|
-  p post.index
-  p post.children.map{|post|
-     post.index
-  }
-}
 
-exit
+
 puts "<html><title>#{thread.title}</title><body>"
+puts '<style> .owner { color: #3333ff; font-weight: bold; } .topic { margin-bottom: 2em; background: #ffffcc; border: 1px gray solid;}</style>'
 
 # スコアついてるやつ表示
-thread.posts.select{|post| post.score > 0}.each{|post|
+thread.posts.select{|post| post.primary? }.each{|post|
+  puts '<div class="topic">'
   post.to_html
-  # puts "<font size='3em'><div>#{post.index}<br>#{post.body}</font></div>"
+  post.descendant.select{|post| post.scored?}.each{|post|
+    post.to_html
+  }
+  puts '</div>'
 }
+
+#thread.posts.select{|post| post.score > 0}.each{|post|
+#thread.post_at(48).to_html
+#thread.post_at(48).descendant.each{|post|
+#  post.to_html
+  # puts "<font size='3em'><div>#{post.index}<br>#{post.body}</font></div>"
+#}
 puts "</body></html>"
