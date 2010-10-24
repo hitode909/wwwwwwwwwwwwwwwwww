@@ -45,7 +45,7 @@ thread.posts.each{ |post|
 
 
 
-puts "<html><title>#{thread.title}</title><body>"
+puts '<html><head><title>' + thread.title + '</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body>'
 puts '<style> .owner { color: #3333ff; font-weight: bold; } .topic { margin-bottom: 2em; background: #ffffcc; border: 1px gray solid;}</style>'
 
 # スコアついてるやつ表示
