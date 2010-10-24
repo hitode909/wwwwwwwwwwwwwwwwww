@@ -39,7 +39,8 @@ module Bot2ch
         lines = f.read.toutf8
         lines.each_line do |line|
           dat, title = line.split('<>')
-          threads << Thread.new("#{@url}/dat/#{dat}", title)
+          created_on = Time.at(dat.to_i)
+          threads << Thread.new("#{@url}/dat/#{dat}", title, created_on)
         end
       end
       threads
@@ -51,11 +52,12 @@ module Bot2ch
   end
 
   class Thread
-    attr_accessor :dat, :title
+    attr_accessor :dat, :title, :created_on
 
-    def initialize(url, title)
+    def initialize(url, title, created_on = Time.now)
       @dat = url
       @title = title.strip
+      @created_on = created_on
     end
 
     def url
