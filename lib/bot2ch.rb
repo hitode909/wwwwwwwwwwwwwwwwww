@@ -1,4 +1,4 @@
-# -*- Coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Bot2ch
 # Copyright (c) 2009 Kazuki UCHIDA
 # Licensed under the MIT License:
@@ -9,6 +9,7 @@ require 'kconv'
 require 'yaml/store'
 require 'net/http'
 require 'cgi'
+require 'cached_resource'
 
 module Bot2ch
   class Menu
@@ -18,9 +19,9 @@ module Bot2ch
 
     def get_board(subdir)
       reg = Regexp.new("href=(.+#{subdir})", Regexp::IGNORECASE)
-      open(@bbsmenu) do |f|
+      CachedResource.resource(@bbsmenu) do |f|
         f.each do |line|
-          return Board.new($1) if line =~ reg
+          return Board.new($1) if line.encode("utf-8", "sjis") =~ reg
         end
       end
     end
@@ -34,9 +35,9 @@ module Bot2ch
 
     def get_threads
       threads = []
-      open(@subject) do |f|
+      CachedResource.resource(@subject) do |f|
         lines = f.read.toutf8
-        lines.each do |line|
+        lines.each_line do |line|
           dat, title = line.split('<>')
           threads << Thread.new("#{@url}/dat/#{dat}", title)
         end
@@ -65,7 +66,7 @@ module Bot2ch
     def get_images
       images = []
       downloaders = [NormalImageDownloader, ImepitaDownloader]
-      open(@dat) do |f|
+      CachedResource.resource(@dat) do |f|
         lines = f.read.toutf8
         lines.each do |line|
           contents = line.split('<>')[3]
@@ -93,9 +94,9 @@ module Bot2ch
     def posts
       return @posts if @posts
       index = 1
-      open(@dat) do |f|
+      CachedResource.resource(@dat) do |f|
         lines = f.read.toutf8
-        @posts = lines.map do |line|
+        @posts = lines.each_line.map do |line|
           post = Post.new
           post.thread = self
           name, email, _date, body = line.split('<>')
