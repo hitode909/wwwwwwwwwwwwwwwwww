@@ -38,9 +38,10 @@ module Bot2ch
       CachedResource.resource(@subject) do |f|
         lines = f.read.toutf8
         lines.each_line do |line|
-          dat, title = line.split('<>')
+          dat, _title = line.split('<>')
+          title, posts_length = *_title.scan(/^(.*)\((\d+)\)$/).first
           created_on = Time.at(dat.to_i)
-          threads << Thread.new("#{@url}/dat/#{dat}", title, created_on)
+          threads << Thread.new("#{@url}/dat/#{dat}", title, posts_length.to_i, created_on)
         end
       end
       threads
@@ -52,11 +53,12 @@ module Bot2ch
   end
 
   class Thread
-    attr_accessor :dat, :title, :created_on
+    attr_accessor :dat, :title, :created_on, :posts_length
 
-    def initialize(url, title, created_on = Time.now)
+    def initialize(url, title, posts_length, created_on = Time.now)
       @dat = url
       @title = title.strip
+      @posts_length = posts_length
       @created_on = created_on
     end
 
@@ -92,7 +94,7 @@ module Bot2ch
     def post_at(i)
       posts[i-1]
     end
-    
+
     def posts
       return @posts if @posts
       index = 1
@@ -116,12 +118,20 @@ module Bot2ch
 
     def set_family(parent,child)
       return unless child.index > parent.index
-      parent.set_child(child) 
+      parent.set_child(child)
       child.set_parent(parent)
     end
 
     def dat_no
       File.basename(@dat, '.dat')
+    end
+
+    def speed
+      self.posts_length / (Time.now - self.created_on) * (3600 * 24)
+    end
+
+    def title_and_length
+      "#{title}(#{posts_length})"
     end
   end
 
