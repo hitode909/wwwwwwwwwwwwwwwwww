@@ -8,7 +8,7 @@ require 'generator'
 
 menu = Bot2ch::Menu.new
 board = menu.get_board('news4vip')
-thread = board.threads.select{|th| th.title =~ /キーボード弾いて/}.first
+thread = board.threads.select{|th| th.title =~ /音痴/}.first
 # thread = Bot2ch::Thread.new('http://yuzuru.2ch.net/test/read.cgi/news4vip/1286724144/l50', '声優だけど質問ある？')
 
 # TODO

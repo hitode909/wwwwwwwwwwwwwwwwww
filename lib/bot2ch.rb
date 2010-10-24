@@ -124,13 +124,14 @@ module Bot2ch
   end
 
   class Post
-    attr_accessor :thread, :name, :email, :date, :body, :index, :user_id, :thread, :score,:parents,:children
+    attr_accessor :thread, :name, :email, :date, :body, :index, :user_id, :thread, :score,:parents,:children,:color
 
     def is_owner
       self.thread.post_at(1).user_id == self.user_id
     end
 
     def to_html
+      self.fix_color
       color = self.score > 3 ? 'red' : self.score > 1 ? 'blue' : 'black'
       puts '<dl class="thread" style="font-size: ' + (Math.log(self.score + 10) - 1.5).to_s + 'em; color: ' + color + '" >'
       puts '<dt hb:annotation="true">'
@@ -145,7 +146,9 @@ module Bot2ch
       puts self.user_id
 
       puts '</dt><dd>'
+      puts '<font Color=' + "#{self.color}" + '>'
       puts self.body
+      puts '</font>'
       puts '</dd></dl>'
     end
 
@@ -153,6 +156,7 @@ module Bot2ch
       @score  =  0
       @parents = []
       @children = []
+      @color = 'black'
     end
 
     def url
@@ -187,6 +191,14 @@ module Bot2ch
     
     def descendant
       @children.concat(@children.map(&:descendant).flatten).uniq.sort_by{|post| post.index}
+    end
+
+    def fix_color
+      words = ["うんこ","www","お前","いや"]
+      words.each{|word|
+        self.color = 'Fuchsia' if self.body.include?(word)
+      }
+      self.color = "blue" if self.is_owner
     end
 
   end
