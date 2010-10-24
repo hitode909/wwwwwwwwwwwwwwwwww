@@ -20,10 +20,10 @@ thread = board.threads.sort_by{|t| t.speed}.reverse.first
 # 表示の工夫，画像展開，リンク
 
 # 1の発言
-user_id = thread.post_at(1).user_id
-thread.posts.select{|post| post.user_id == user_id}.each{|post|
-  post.score += 1
-}
+# user_id = thread.post_at(1).user_id
+# thread.posts.select{|post| post.user_id == user_id}.each{|post|
+#   post.score += 1
+# }
 
 # 母子参照
 thread.posts.each{ |post|
