@@ -5,17 +5,17 @@ require 'open-uri'
 module CachedResource
 
   private
-  def resource(path, force = false)
-    cache = '/tmp/' + Digest::MD5.hexdigest(path.to_s)
-    File.delete(cache) if force and File.exists?(cache)
+  def flush(path)
+    cache = '/tmp/' + Digest::MD5.hexdigest(name.to_s)
+    File.delete(cache)
+  end
 
-    if File.exists?(cache) and Time.now - File.ctime(cache) < 10 * 60
-      open(cache)
-    else
-      File.delete(cache) if File.exists?(cache)
-      download(path, cache)
-      open(cache)
-    end
+  def resource(name, *rest, &block)
+    cache = '/tmp/' + Digest::MD5.hexdigest(name.to_s)
+    File.delete(cache) if File.exists?(cache) and Time.now - File.ctime(cache) > 10 * 60
+
+    download(name, cache) unless File.exists?(cache)
+    open(cache, *rest, &block)
   end
 
   def download(url, file)
@@ -29,6 +29,6 @@ module CachedResource
     raise error
   end
 
-  module_function :resource, :download
+  module_function :flush, :resource, :download
 
 end
