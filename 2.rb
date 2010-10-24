@@ -4,7 +4,6 @@ require 'rubygems'
 $:.unshift('lib')
 require 'bot2ch'
 require 'MeCab'
-require 'generator'
 
 menu = Bot2ch::Menu.new
 board = menu.get_board('news4vip')

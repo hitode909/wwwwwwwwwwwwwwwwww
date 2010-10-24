@@ -148,9 +148,9 @@ module Bot2ch
       puts self.user_id
 
       puts '</dt><dd>'
-      puts '<font Color=' + "#{self.color}" + '>'
+#      puts '<font Color=' + "#{self.color}" + '>'
       puts self.body
-      puts '</font>'
+#      puts '</font>'
       puts '</dd></dl>'
     end
 
@@ -196,11 +196,8 @@ module Bot2ch
     end
 
     def fix_color
-      words = ["うんこ","www","お前","いや"]
-      words.each{|word|
-        self.color = 'Fuchsia' if self.body.include?(word)
-      }
-      self.color = "blue" if self.is_owner
+      self.color = "Red" if self.score > 2
+      self.color = "Navy" if self.is_owner
     end
 
   end
