@@ -19,7 +19,7 @@ module Bot2ch
 
     def boards
       list = []
-      reg = Regexp.new("<a href=(http://\\w+\\.2ch\\.net/\\w+/)>", Regexp::IGNORECASE) # TODO: test
+      reg = Regexp.new("<a href=(http://\\w+\\.2ch\\.net/\\w+)/>", Regexp::IGNORECASE) # TODO: test
       CachedResource.resource(@bbsmenu) do |f|
         f.each_line{|line|
           list << Board.new($1) if line.encode("utf-8", "sjis") =~ reg
