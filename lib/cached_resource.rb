@@ -21,7 +21,7 @@ module CachedResource
   end
 
   def download(url, file)
-    warn "download #{url}"
+    # warn "download #{url}"
     open(file, 'w') {|local|
       got = open(url) {|remote|
         local.write(remote.read)

@@ -75,7 +75,7 @@ module Bot2ch
 
     def url
       list = @dat.split('/').reject{|f| f == ''}
-      "http://#{list[1]}/test/read.cgi/#{list[2]}/#{list[4].scan(/\d/)}"
+      "http://#{list[1]}/test/read.cgi/#{list[2]}/#{list[4].scan(/\d/).join}"
     end
 
     def get_images
@@ -126,7 +126,7 @@ module Bot2ch
             index += 1
             post
           rescue
-            warn "failed to parse: #{line}"
+            # warn "failed to parse: #{line}"
             post = Post::Deleted.new
             post.thread = self
             index += 1
