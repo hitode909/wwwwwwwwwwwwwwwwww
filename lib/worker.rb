@@ -1,3 +1,5 @@
+require 'timeout'
+
 class Worker
   attr_accessor :concurrency, :tasks, :running_tasks, :mutex
   def initialize(concurrency = 10)
@@ -25,7 +27,15 @@ class Worker
           }
           (concurrency - running_tasks.length).times{
             next if tasks.empty?
-            running_tasks << Thread.new{tasks.shift.call(self)}
+            running_tasks << Thread.new{
+              begin
+                timeout(10) {
+                  (rand > 0.5 ? tasks.shift : tasks.pop).call(self)
+                }
+              rescue StandardError, TimeoutError => e
+                p e
+              end
+            }
           }
         }
         sleep 0.1
