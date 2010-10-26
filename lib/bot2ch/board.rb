@@ -1,5 +1,6 @@
 module Bot2ch
   class Board
+    attr_accessor :url
     def initialize(url)
       @url = url
       @subject = "#{url}/subject.txt"

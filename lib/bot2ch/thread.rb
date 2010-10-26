@@ -43,6 +43,10 @@ module Bot2ch
       posts[i-1]
     end
 
+    def get_resource
+      CachedResource.resource(@dat)
+    end
+
     def posts
       return @posts if @posts
       index = 1
