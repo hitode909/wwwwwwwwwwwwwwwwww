@@ -12,7 +12,7 @@ module CachedResource
 
   def resource(name, *rest, &block)
     cache = '/tmp/' + Digest::MD5.hexdigest(name.to_s)
-    File.delete(cache) if File.exists?(cache) and Time.now - File.ctime(cache) > 10 * 60
+    # File.delete(cache) if File.exists?(cache) and Time.now - File.ctime(cache) > 10 * 60
 
     download(name, cache) unless File.exists?(cache)
     open(cache, *rest, &block)
