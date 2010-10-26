@@ -111,19 +111,28 @@ module Bot2ch
       index = 1
       CachedResource.resource(@dat) do |f|
         lines = f.read.toutf8
-        @posts = lines.each_line.map do |line|
-          post = Post.new
-          post.thread = self
-          name, email, _date, body = line.split('<>')
-          date = Time.local(*_date.scan(/\d+/)[0..5])
-          user_id = _date.scan(/ID:(.*)$/).flatten.first
-          %w{name email date user_id body index}.each{ |key|
-            eval "post.#{key} = #{key}"
-          }
-          post.thread = self
-          index += 1
-          post
-        end
+        @posts = lines.each_line.map {|line|
+          begin
+            raise if line == "あぼーん"
+            post = Post.new
+            post.thread = self
+            name, email, _date, body = line.split('<>')
+            date = Time.local(*_date.scan(/\d+/)[0..5])
+            user_id = _date.scan(/ID:(.*)$/).flatten.first
+            %w{name email date user_id body index}.each{ |key|
+              eval "post.#{key} = #{key}"
+            }
+            post.thread = self
+            index += 1
+            post
+          rescue
+            warn "failed to parse: #{line}"
+            post = Post::Deleted.new
+            post.thread = self
+            index += 1
+            post
+          end
+        }
       end
     end
 
@@ -221,6 +230,9 @@ module Bot2ch
       self.color = "Navy" if self.is_owner
     end
 
+  end
+
+  class Post::Deleted < Post
   end
 
   class Downloader
