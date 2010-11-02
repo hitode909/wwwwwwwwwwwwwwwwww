@@ -9,18 +9,20 @@ module Bot2ch
 
     def to_html
       self.fix_color
-      color = self.score > 3 ? 'red' : self.score > 1 ? 'blue' : 'black'
-      puts '<dl class="thread" style="font-size: ' + (Math.log(self.score + 10) - 1.5).to_s + 'em; color: ' + color + '" >'
+      puts '<dl class="thread">'
       puts '<dt hb:annotation="true">'
       puts self.index
       puts '：<font color="green"><b>'
-      puts self.is_owner ? '<span class="owner">' : '<span>'
+      puts '<span>'
+
       puts self.name
       puts '</span>'
       puts '</b></font>：'
       puts self.date
+      puts self.is_owner ? '<span class="owner">' : '<span>'
       puts 'ID:'
       puts self.user_id
+      puts '</span>'
 
       puts '</dt><dd>'
       #      puts '<font Color=' + "#{self.color}" + '>'
@@ -41,21 +43,30 @@ module Bot2ch
     end
 
     def body_text
+      begin
       CGI.unescapeHTML(self.body.gsub(/<br>/, '').gsub(/http[^\s]+/, '').gsub(/<\/?a[^>]*>/, ''))
+      rescue
+        p self
+        return ""
+      end
     end
 
+    def standard_score
+      @standard_score ||=
+        (self.score - self.thread.average_score) * 10 / self.thread.deviation
+    end
 
 
     def set_child(post)
       return if @children.include?(post) or post.index < self.index
       @children << post
-      @score +=1
+#      @score +=1
     end
 
     def set_parent(post)
       return if @parents.include?(post) or post.index > self.index
       @parents << post
-      @score +=1
+      # @score +=1
     end
 
     def scored?
@@ -67,7 +78,15 @@ module Bot2ch
     end
     
     def descendant
-      @children.concat(@children.map(&:descendant).flatten).uniq.sort_by{|post| post.index}
+      []
+      # warn self.index
+      #       return [] if @children.empty?
+      #       p self.children.each{|popopo|
+      #         p popopo.descendant
+      #       }
+      #       aaa = @children.concat(@children.map(&:descocendant).flatten)
+      # p aaa
+      # aaa.uniq.sort_by{|post| post.index}
     end
 
     def fix_color
@@ -78,6 +97,9 @@ module Bot2ch
   end
 
   class Post::Deleted < Post
+    def body
+      ''
+    end
   end
 
 end
