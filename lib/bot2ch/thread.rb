@@ -79,6 +79,7 @@ module Bot2ch
 
     def set_family(parent,child)
       return unless child.index > parent.index
+      return if parent.children.include?(child)
       parent.set_child(child)
       child.set_parent(parent)
     end
@@ -93,6 +94,27 @@ module Bot2ch
 
     def title_and_length
       "#{title}(#{posts_length})"
+    end
+
+    def keywords
+     return @keywords if @keywords
+      require 'json'
+      require 'net/http'
+      Net::HTTP.version_1_2
+      Net::HTTP.start('jlp.yahooapis.jp', 80) {|http|
+        response = http.post('/KeyphraseService/V1/extract',"output=json&appid=RZv4ed6xg67n15cyyGFF8Io0r3i.o0uwISXfrFOZYyMghbdeNA10_M6KemHLqz0laQ--&sentence=#{URI.escape(self.all_body_text[-10000..-1])}")
+        @keywords = JSON.parse(response.body)
+      }
+    end
+
+    def average_score
+      @average_score ||=
+        self.posts.map(&:score).inject{|a,b| a+b} / self.posts.length.to_f
+    end
+
+    def deviation
+      @deviation ||=
+        Math.sqrt(self.posts.map(&:score).inject{|a,b| a+(b - self.average_score)*(b - self.average_score)}/ self.posts.length.to_f)
     end
   end
 end
