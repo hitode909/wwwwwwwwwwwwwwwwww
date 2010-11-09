@@ -45,13 +45,14 @@ puts "<pre>"
 pp thread.keywords 
 puts "</pre>"
 thread.keywords.keys.each{|rule|
-thread.posts.select{|post| post.body.match rule }.each{|post|
-post.score += thread.keywords[rule].to_i
-    # post.body.scan(rule).length 
+  next if rule.match(/\./)
+  thread.posts.select{|post| post.body.match rule }.each{|post|
+    post.score += thread.keywords[rule].to_i
+
   }
 }
 
-
 # スコアついてるやつ表示
 puts Blog::Entry.new(thread.title,thread.posts.select{|post| post.standard_score  >= 10 }).to_html
+
 
