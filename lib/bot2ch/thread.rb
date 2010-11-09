@@ -38,6 +38,10 @@ module Bot2ch
       self.posts.map(&:body_text).join("\n")
     end
 
+    def all_body_text_yahoo
+      self.all_body_text.gsub(/&|=|\?|#|<[^>]>|>>\d+/, '').gsub(/\n+/, "\n").gsub(/( |　)+/, ' ')[1..80000]
+    end
+
     # iは1から
     def post_at(i)
       posts[i-1]
@@ -102,7 +106,8 @@ module Bot2ch
       require 'net/http'
       Net::HTTP.version_1_2
       Net::HTTP.start('jlp.yahooapis.jp', 80) {|http|
-        response = http.post('/KeyphraseService/V1/extract',"output=json&appid=RZv4ed6xg67n15cyyGFF8Io0r3i.o0uwISXfrFOZYyMghbdeNA10_M6KemHLqz0laQ--&sentence=#{URI.escape(self.all_body_text[-10000..-1])}")
+        data = "output=json&appid=RZv4ed6xg67n15cyyGFF8Io0r3i.o0uwISXfrFOZYyMghbdeNA10_M6KemHLqz0laQ--&sentence=#{self.all_body_text_yahoo}"
+        response = http.post('/KeyphraseService/V1/extract',data)
         @keywords = JSON.parse(response.body)
       }
     end

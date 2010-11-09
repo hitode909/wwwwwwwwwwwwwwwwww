@@ -40,6 +40,25 @@ thread.posts.each{ |post|
   }
 }
 
+# puts thread.all_body_text.length
+# puts URI.escape(thread.all_body_text).length
+# exit
+
+# len = thread.all_body_text.length
+# len.step(1, -100) {|i|
+#   begin
+#     p i
+#     URI.escape(thread.all_body_text[0...i])
+#   rescue => err
+#     p err
+#     p i
+#     exit
+#   end
+# }
+# exit
+# puts URI.escape(puts thread.all_body_text).length
+# exit
+
 require "pp"
 puts "<pre>"
 pp thread.keywords 
