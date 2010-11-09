@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title><%=h @title %></title>
+    <style> 
+      .owner {
+      color: white;
+      font-weight: bold;
+      background: green;
+      } 
+      .topic {
+      margin-bottom: 2em;
+      background: #ffffcc;
+      border: 1px gray solid;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><%=h @title %></h1>
+    <dl>
+    <% @posts.each do |post|%>
+    <dt hb:annotation="true">
+      <%=h post.index %>：
+      <font color="green">
+	<b>
+	  <%=h post.name %>
+	</b>
+      </font>
+      :<%=h post.date %> ID:<%=h post.user_id %>
+    </dt>
+    <dd>
+      <%= post.body%>
+    </dd>
+    <% end %>
+    </dl>
+  </body>
+</html>
