@@ -42,7 +42,7 @@ module Bot2ch
     end
 
     def all_body_text_yahoo
-      self.all_body_text.gsub(/[^ ]*:\/\/[^ ]*/, "").gsub(/&|=|\?|#|<[^>]>|>>\d+/, '').gsub(/\n+/, "\n").gsub(/( |　)+/, ' ')[1..80000]
+      self.all_body_text.gsub(/[^ ]*:\/\/[^ ]*/, "").gsub(/&|=|\?|#|<[^>]>|>>\d+/, '').gsub(/\n+/, "\n").gsub(/( |　)+/, ' ')[1..30000]
     end
 
     # iは1から

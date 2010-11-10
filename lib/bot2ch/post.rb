@@ -31,6 +31,10 @@ module Bot2ch
       puts '</dd></dl>'
     end
 
+    def body_xhtml
+      self.body.gsub(/<br>/, "<br/>")
+    end
+
     def initialize
       @score  =  0
       @parents = []
@@ -92,6 +96,13 @@ module Bot2ch
     def fix_color
       self.color = "Red" if self.score > 2
       self.color = "Navy" if self.is_owner
+    end
+
+    def html_classes
+      list = []
+      list << 'owner' if self.is_owner
+      list << 'big' if self.standard_score > 20
+      list
     end
 
   end

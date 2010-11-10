@@ -1,0 +1,4 @@
+<%- @posts.each do |post| -%>
+<div class="ch-post <%=h post.html_classes.join(' ') %>" data-score="<%=h post.standard_score %>" ><div class="ch-post-title"><%=h post.index %>：<span class="ch-post-author"><%=h post.name %></span> :<%=h post.date %> ID : <%=h post.user_id %></div>
+<div class="ch-post-body"><%= post.body_xhtml %></div></div>
+<%- end -%>
