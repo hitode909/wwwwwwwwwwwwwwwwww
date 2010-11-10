@@ -3,7 +3,6 @@
 require 'rubygems'
 $:.unshift('lib')
 require 'bot2ch'
-require 'MeCab'
 require 'blog'
 
 menu = Bot2ch::Menu.new
