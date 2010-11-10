@@ -32,7 +32,11 @@ module Bot2ch
     end
 
     def body_xhtml
-      self.body.gsub(/<br>/, "<br/>")
+      self.body.gsub(/<br>/, "<br/>").gsub(/^sssp.*/, '').gsub(/<\/?a[^>]*>/, '').gsub(/h?ttp[^ ]+/) {|url|
+        url = 'h' + url unless url.match(/^http/)
+        option = url.match(/(jpg|png|gif|bmp)$/) ? 'image' : 'title'
+        "[#{url}:#{option}]"
+      }
     end
 
     def initialize
