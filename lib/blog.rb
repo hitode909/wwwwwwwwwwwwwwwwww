@@ -1,7 +1,7 @@
 module Blog
   require "erb"
   class Entry
-include  ERB::Util
+    include  ERB::Util
     def initialize(title,posts)
       @title = title
       @posts = posts
