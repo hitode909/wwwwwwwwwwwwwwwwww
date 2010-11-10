@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+require 'json'
+require 'net/http'
+
 module Bot2ch
   class Thread
     attr_accessor :dat, :title, :created_on, :posts_length
@@ -102,14 +105,21 @@ module Bot2ch
 
     def keywords
      return @keywords if @keywords
-      require 'json'
-      require 'net/http'
       Net::HTTP.version_1_2
-      Net::HTTP.start('jlp.yahooapis.jp', 80) {|http|
+      self.net_http_class.start('jlp.yahooapis.jp', 80) {|http|
         data = "output=json&appid=RZv4ed6xg67n15cyyGFF8Io0r3i.o0uwISXfrFOZYyMghbdeNA10_M6KemHLqz0laQ--&sentence=#{self.all_body_text_yahoo}"
         response = http.post('/KeyphraseService/V1/extract',data)
         @keywords = JSON.parse(response.body)
       }
+    end
+
+    def net_http_class
+      proxy_env = ENV['HTTP_PROXY'] or ENV['http_proxy']
+      return Net::HTTP unless proxy_env
+      host, port = proxy_env.match(/http:\/\/(.+):(\d+)/).to_a.values_at(1,2)
+      return Net::HTTP unless host and port
+      warn "using proxy #{[host, port]}"
+      return Net::HTTP::Proxy(host, port)
     end
 
     def average_score
