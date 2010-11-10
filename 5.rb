@@ -10,9 +10,10 @@ unless ENV['hatena_username'] and ENV['hatena_password']
 end
 
 menu = Bot2ch::Menu.new
-board = menu.get_board('news4vip')
+# thread = menu.boards.sample.threads.sample
 
-thread = board.threads.sort_by{|t| t.speed}.reverse[0..30].sample
+board = menu.get_board('news4vip')
+thread = board.threads.sample
 
 # 1の発言
 iti = 100
@@ -38,3 +39,6 @@ writer = Blog::HatenaDiaryWriter.new(ENV['hatena_username'], ENV['hatena_passwor
 entry = Blog::Entry.new(thread.title,thread.posts.select{|post| post.standard_score  >= 10 })
 puts entry.title
 writer.post(entry)
+
+
+puts "http://d.hatena.ne.jp/#{ENV['hatena_username']}/"
