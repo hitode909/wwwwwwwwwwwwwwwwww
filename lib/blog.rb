@@ -66,7 +66,7 @@ module Blog
         )
       require 'rexml/document'
       atom_entry.content = Atom::Content.new(:type => 'xhtml', :body => self.rexml_element_from_text(entry.to_hatena_body))
-      puts @client.create_entry uri, atom_entry
+      @client.create_entry uri, atom_entry
     end
 
     def rexml_element_from_text(text)
