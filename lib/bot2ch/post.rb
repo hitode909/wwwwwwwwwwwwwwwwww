@@ -36,6 +36,8 @@ module Bot2ch
         url = 'h' + url unless url.match(/^http/)
         option = url.match(/(jpg|png|gif|bmp)$/) ? 'image' : 'title'
         "[#{url}:#{option}]"
+      }.gsub(/ID:\w+/) {|id|
+        "[]#{id}[]"
       }
     end
 
