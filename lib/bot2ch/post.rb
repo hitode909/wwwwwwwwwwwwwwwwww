@@ -61,11 +61,15 @@ module Bot2ch
       end
     end
 
-    def standard_score
-      @standard_score ||=
-        (self.score - self.thread.average_score) * 10 / self.thread.deviation
+    def self.register(*names)
+      names.each{|name|
+        define_method("standard_#{name}".to_sym){
+          @cache ||= {}
+          @cache[name] ||=
+          (self.send(name) - self.thread.send("average_#{name}".to_sym)) * 10 / self.thread.send("deviation_#{name}".to_sym)
+         }
+       }
     end
-
 
     def set_child(post)
       return if @children.include?(post) or post.index < self.index
@@ -97,6 +101,24 @@ module Bot2ch
       #       aaa = @children.concat(@children.map(&:descocendant).flatten)
       # p aaa
       # aaa.uniq.sort_by{|post| post.index}
+    end
+
+    def add_mention(index)
+      @mentions ||= []
+      @mentions << index
+      @mentions
+    end
+
+    def mentions
+      unless defined? @mentions
+        self.thread.collect_mentions
+      end
+
+      return @mentions
+    end
+
+    def mentions_count
+      self.mentions.length
     end
 
     def fix_color

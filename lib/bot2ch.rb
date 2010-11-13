@@ -12,8 +12,9 @@ require 'cgi'
 require 'cached_resource'
 
 # bot2ch
+require 'bot2ch/post'
 require 'bot2ch/menu'
 require 'bot2ch/board'
 require 'bot2ch/thread'
-require 'bot2ch/post'
+
 

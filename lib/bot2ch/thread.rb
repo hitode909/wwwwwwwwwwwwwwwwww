@@ -6,6 +6,7 @@ module Bot2ch
   class Thread
     attr_accessor :dat, :title, :created_on, :posts_length
 
+
     def initialize(url, title, posts_length, created_on = Time.now)
       @dat = url
       @title = title.strip
@@ -122,14 +123,29 @@ module Bot2ch
       return Net::HTTP::Proxy(host, port)
     end
 
-    def average_score
-      @average_score ||=
-        self.posts.map(&:score).inject{|a,b| a+b} / self.posts.length.to_f
+    def collect_mentions
+      self.posts.each{|post|
+        post.body.scan(/>>(\d+)/).flatten.each{|num|
+          self.post_at(num.to_i).add_mention(post.index)
+        }
+      }
     end
 
-    def deviation
-      @deviation ||=
-        Math.sqrt(self.posts.map(&:score).inject{|a,b| a+(b - self.average_score)*(b - self.average_score)}/ self.posts.length.to_f)
+    def self.register(*names)
+      Bot2ch::Post.register(*names)
+      names.each{|name|
+        define_method("average_#{name}".to_sym){
+          @cache ||= {}
+          @cache[name] ||= self.posts.map(&name).inject{|a,b| a+b} / self.posts.length.to_f
+        }
+
+        define_method("deviation_#{name}".to_sym) {
+          @cache ||= {}
+          @cache[name] ||= 
+          Math.sqrt(self.posts.map(&name).inject{|a,b| a+(b - self.send("average_#{name}".to_sym))**2 } / self.posts.length.to_f)
+        }
+      }
     end
+    self.register :score,:mentions_count
   end
 end

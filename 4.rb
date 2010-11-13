@@ -50,6 +50,9 @@ thread.keywords.keys.each{|rule|
 
   }
 }
+# thread.posts.each{|post| p  post.standard_score }
+# exit
+
 
 # スコアついてるやつ表示
 puts Blog::Entry.new(thread.title,thread.posts.select{|post| post.standard_score  >= 10 }).to_html
