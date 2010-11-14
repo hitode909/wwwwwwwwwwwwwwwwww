@@ -4,16 +4,18 @@ require 'rubygems'
 $:.unshift('lib')
 require 'bot2ch'
 require 'blog'
+require 'pit'
 
-unless ENV['hatena_username'] and ENV['hatena_password']
-  raise '環境変数 hatena_usernameとhatena_passwordを設定してください'
-end
+account = Pit.get("hatena", :require => {
+                    :username => "hatena_id",
+                    :password => "password"
+                  })
 
 menu = Bot2ch::Menu.new
 # thread = menu.boards.sample.threads.sample
 
 board = menu.get_board('news4vip')
-thread = board.threads.sample
+thread = menu.boards.sample.threads.sample
 
 # 1の発言
 iti = 100
@@ -34,11 +36,14 @@ thread.keywords.keys.each{|rule|
   }
 }
 
+sorted_scores = thread.posts.map(&:standard_score).sort.reverse
+want = thread.posts.length / 10
+threshold = sorted_scores[want] || 10
+
 # 記事投稿 いきなり投稿されるので気をつける!!!!!
-writer = Blog::HatenaDiaryWriter.new(ENV['hatena_username'], ENV['hatena_password'])
-entry = Blog::Entry.new(thread.title,thread.posts.select{|post| post.standard_score  >= 10 })
+writer = Blog::HatenaDiaryWriter.new(account[:username], account[:password])
+entry = Blog::Entry.new(thread.title_and_length, thread.posts.select{|post| post.standard_score  >= threshold })
 puts entry.title
 writer.post(entry)
-
 
 puts "http://d.hatena.ne.jp/#{ENV['hatena_username']}/"
