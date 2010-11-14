@@ -106,7 +106,7 @@ module Bot2ch
 
     def add_mention(index)
       @mentions ||= []
-      @mentions << index
+      @mentions << index if index
       @mentions
     end
 
@@ -114,7 +114,6 @@ module Bot2ch
       unless defined? @mentions
         self.thread.collect_mentions
       end
-
       return @mentions
     end
 

@@ -125,7 +125,8 @@ module Bot2ch
 
     def collect_mentions
       self.posts.each{|post|
-        post.body.scan(/>>(\d+)/).flatten.each{|num|
+        post.add_mention(nil)
+        post.body.scan(/&gt;&gt;(\d+)/).flatten.each{|num|
           self.post_at(num.to_i).add_mention(post.index)
         }
       }
