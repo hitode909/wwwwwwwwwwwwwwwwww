@@ -8,7 +8,7 @@ require 'blog'
 menu = Bot2ch::Menu.new
 board = menu.get_board('news4vip')
 
-thread = board.threads.sort_by{|t| t.speed}.reverse[2]
+thread = board.threads.sort_by{|t| t.speed}.sample # reverse[2]
 # thread = Bot2ch::Thread.new('http://yuzuru.2ch.net/test/read.cgi/news4vip/1286724144/l50', '声優だけど質問ある？')
 
 # TODO
@@ -53,8 +53,11 @@ thread.keywords.keys.each{|rule|
 # thread.posts.each{|post| p  post.standard_score }
 # exit
 
+sorted_scores = thread.posts.map(&:standard_score).sort.reverse
+want = thread.posts.length / 10
+threshold = sorted_scores[want] || 10
 
 # スコアついてるやつ表示
-puts Blog::Entry.new(thread.title,thread.posts.select{|post| post.standard_score  >= 10 }).to_html
+puts Blog::Entry.new(thread.title_and_length,thread.posts.select{|post| post.standard_score  >= threshold }).to_html
 
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 module Bot2ch
   class Post
     attr_accessor :thread, :name, :email, :date, :body, :index, :user_id, :thread, :score,:parents,:children,:color
@@ -38,7 +39,7 @@ module Bot2ch
         "[#{url}:#{option}]"
       }.gsub(/ID:\w+/) {|id|
         "[]#{id}[]"
-      }
+      }# .gsub(/&/, "&amp;")
     end
 
     def initialize

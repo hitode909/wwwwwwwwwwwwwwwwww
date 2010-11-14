@@ -67,10 +67,31 @@ module Blog
       require 'rexml/document'
       atom_entry.content = Atom::Content.new(:type => 'xhtml', :body => self.rexml_element_from_text(entry.to_hatena_body))
       @client.create_entry uri, atom_entry
+    rescue => error
+      warn error
+      exit
     end
 
     def rexml_element_from_text(text)
-      REXML::Document.new('<?xml version="1.0"?><div>' + text + '</div>').root
+      timeout(6) {
+        loop {
+          begin
+            return REXML::Document.new('<?xml version="1.0"?><div>' + text + '</div>').root
+          rescue  TimeoutError => error
+            raise error
+          rescue => error
+            if error.message =~ /Undeclared entity '(.+)' in raw string/
+            warn "remove #{$1}"
+              text.gsub!($1, "")
+            elsif error.message =~ /Illegal character '&' in raw string "(.+)"/
+              warn "remove & from #{$1}"
+              text.gsub!($1, $1.gsub("&", "&amp;"))
+            else
+              raise error
+            end
+          end
+        }
+      }
     end
   end
 end
