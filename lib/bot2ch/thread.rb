@@ -147,6 +147,6 @@ module Bot2ch
         }
       }
     end
-    self.register :score,:mentions_count
+    self.register :score,:mentions_count,:keyword_rate
   end
 end

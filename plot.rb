@@ -42,6 +42,4 @@ thread.keywords.keys.each{|rule|
 }
 
 
-puts thread.posts.map{|post| "#{post.standard_mentions_count} #{post.standard_score}"}.join("\n")
-
-
+puts thread.posts.map{|post| "#{post.standard_keyword_rate} #{post.standard_score}"}.join("\n")

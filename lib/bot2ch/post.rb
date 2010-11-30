@@ -66,8 +66,8 @@ module Bot2ch
       names.each{|name|
         define_method("standard_#{name}".to_sym){
           @cache ||= {}
-          @cache[name] ||=
-          (self.send(name) - self.thread.send("average_#{name}".to_sym)) * 10 / self.thread.send("deviation_#{name}".to_sym)
+          @cache[name] ||= 0.0 if self.thread.send("deviation_#{name}".to_sym) == 0
+          @cache[name] ||= (self.send(name) - self.thread.send("average_#{name}".to_sym)) * 10 / self.thread.send("deviation_#{name}".to_sym)
          }
        }
     end
@@ -119,6 +119,11 @@ module Bot2ch
 
     def mentions_count
       self.mentions.length
+    end
+
+    def keyword_rate
+      @keyword_rate ||=
+        self.score / (1+self.body.length)
     end
 
     def fix_color
